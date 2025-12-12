@@ -1,0 +1,123 @@
+:root {
+    --tile-size: 70px;
+    --edge-thick: 6px; /* 1. 改动：线条变细，看起来更精致 */
+    --bg-color: #222;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+#ui-panel {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    width: 90%;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid #444;
+}
+
+/* --- 棋盘容器 --- */
+#game-board {
+    display: grid;
+    background-color: #111; /* 地图底色 */
+    border: 10px solid #333; /* 地图外框 */
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* --- 基础物体 --- */
+.game-obj {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+/* --- 地块 Tile --- */
+.tile {
+    width: var(--tile-size);
+    height: var(--tile-size);
+    font-size: 12px;
+    cursor: pointer;
+    /* 给地块一点圆角，让它看起来不那么生硬 */
+    /* border-radius: 4px; */ 
+}
+.tile:hover { 
+    filter: brightness(1.2); 
+    z-index: 10;
+}
+
+/* 地形颜色优化 */
+.terrain-plain { background-color: #7cb342; color: #1b5e20; } /* 稍微柔和的绿色 */
+.terrain-mountain { background-color: #6d4c41; color: #d7ccc8; }
+.terrain-desert { background-color: #fdd835; color: #f57f17; }
+.terrain-lake { background-color: #039be5; color: #e1f5fe; }
+.terrain-forest { background-color: #2e7d32; color: #a5d6a7; }
+
+/* --- 边 Edge --- */
+.edge {
+    transition: background-color 0.3s;
+    z-index: 2; /* 保证边在角落之上 */
+}
+
+/* 横向边 */
+.edge-h {
+    width: var(--tile-size);
+    height: var(--edge-thick);
+}
+/* 纵向边 */
+.edge-v {
+    width: var(--edge-thick);
+    height: var(--tile-size);
+}
+/* 角落 (边与边的交叉点) */
+.corner {
+    width: var(--edge-thick);
+    height: var(--edge-thick);
+    background-color: #111; /* 让角落和底色一致，看起来像空的 */
+    z-index: 1; 
+}
+
+/* --- 边境类型样式优化 --- */
+
+/* 2. 改动：平原边尽量隐形 */
+.edge-type-plain { 
+    background-color: rgba(255, 255, 255, 0.05); /* 极淡的颜色，或者直接 transparent */
+} 
+
+/* 3. 改动：山脉用深色实线，看起来像阻挡 */
+.edge-type-mountain { 
+    background-color: #3e2723; 
+    box-shadow: 0 0 2px black;
+    /* 视觉修复：稍微放大一点点，盖住角落的缝隙 */
+    transform: scale(1.4); 
+    z-index: 5;
+} 
+
+/* 4. 改动：河流用亮蓝色，且视觉上放大连接 */
+.edge-type-river { 
+    background-color: #00bcd4; 
+    box-shadow: 0 0 3px #00bcd4;
+    /* 关键技巧：放大 1.5 倍，这样横竖河流在角落相遇时会重叠，看起来就是连贯的 */
+    transform: scale(1.5); 
+    z-index: 4;
+}
+
+/* --- 图标 --- */
+.unit-icon { font-size: 24px; z-index: 10; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); }
+.building-icon { font-size: 16px; position: absolute; top: 2px; right: 2px; text-shadow: 0 1px 2px black;}
+.player-badge {
+    position: absolute; top: 4px; left: 4px;
+    width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
